@@ -1,11 +1,17 @@
 package com.example.pelu.qrcode;
 
+import android.app.Activity;
+import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.telecom.Connection;
 import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import okhttp3.RequestBody;
 
 
 public class DataBase {
@@ -21,9 +27,11 @@ public class DataBase {
 
 
 
-
         Cursor cabecerea = db.rawQuery("SELECT albaran, matricula_cam, matricula_rem, fecha from Cabecera WHERE  Cabecera.enviado = 'no'"
                 , null);
+
+
+
 
         Cursor linea =  db.rawQuery("SELECT id_albaran, scaneo from lineas WHERE  lineas.enviado = 'no'", null);
 
@@ -78,7 +86,7 @@ public class DataBase {
 
     }
 
-                      /*
+                            /*
     Actualiza el campo enviado a SI (cuando haya sido enviado)
                             */
 
@@ -89,6 +97,17 @@ public class DataBase {
             db.execSQL("UPDATE lineas SET enviado='si'");
 
     }
+
+                            /*
+            Inserta los datos en la base de datos
+                             */
+    public  static void Insert(SQLiteDatabase db , String tabla, String campo, ContentValues valor){
+
+        db.insert(tabla, campo, valor);
+
+        db.insert(tabla, campo, valor);
+
+}
 
 
 }

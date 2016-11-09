@@ -162,6 +162,7 @@ public class ReaderActivity extends AppCompatActivity {
                     mTypeName = info.getTypeName();
                     mSubtypeName = info.getSubtypeName();
                     mAvailable = info.isAvailable();
+
                     Log.i("tipod de conexion", "Network Type: " + mTypeName
                             + ", subtype: " + mSubtypeName
                             + ", available: " + mAvailable);
@@ -183,7 +184,7 @@ public class ReaderActivity extends AppCompatActivity {
 
 
         /*
-                GET
+                Llamada al metodo asíncrono por GET
 
 
 
@@ -267,7 +268,7 @@ public class ReaderActivity extends AppCompatActivity {
         String date = (DateFormat.format("dd-MM-yyyy hh:mm:ss", new Date()).toString());
 
 
-        /*
+                                                /*
 
                                INSERCION DATOS TABLA  CABECERA (CAMBIAR A LA CLASE DataBase)
 
@@ -289,13 +290,15 @@ public class ReaderActivity extends AppCompatActivity {
         valores2.put(AyudaBD.Lineas.ID_ALBARAN, albaranes.getText().toString());
 
 
+        /*
+        Lamma al metodo de la clase DataBase para insertar los datos
+         */
 
-        db.insert(AyudaBD.Lineas.NOMBRE_TABLA, AyudaBD.Lineas.LINEA_PEDIDO, valores2);
-        db.insert(AyudaBD.DatosTabla.NOMBRE_TABLA, AyudaBD.DatosTabla.COLUMNA_ID, valores);
+        DataBase.Insert(db, AyudaBD.DatosTabla.NOMBRE_TABLA, AyudaBD.DatosTabla.COLUMNA_ID, valores);
+        DataBase.Insert(db, AyudaBD.Lineas.NOMBRE_TABLA, AyudaBD.Lineas.LINEA_PEDIDO, valores2);
 
 
         Toast.makeText(getApplicationContext(), "Se guardo el dato: ", Toast.LENGTH_LONG).show();
-
 
 
         db.close();
