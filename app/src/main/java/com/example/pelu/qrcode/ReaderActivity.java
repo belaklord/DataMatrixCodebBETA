@@ -1,8 +1,5 @@
 package com.example.pelu.qrcode;
 
-/*
-DOCUMENTAR EL CÓDIGO
- */
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -14,7 +11,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -38,11 +34,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
 import static android.widget.Toast.LENGTH_SHORT;
 import static com.example.pelu.qrcode.R.id.albaran;
 import static com.example.pelu.qrcode.R.id.camion;
+import static com.example.pelu.qrcode.R.id.conexion;
 import static com.example.pelu.qrcode.R.id.matricula_remolque;
 
 
@@ -50,23 +48,34 @@ import static com.example.pelu.qrcode.R.id.matricula_remolque;
 public class ReaderActivity extends AppCompatActivity {
 
 
-    private Button scan_btn, btn_Enviar; // variable del boton //
+    private Button scan_btn, borrar;
 
-
-    private TextView  albaranes, matriculaCamion, matriculaRemolque, tvIsConnected;
+    private TextView albaranes, matriculaCamion, matriculaRemolque, tvIsConnected;
 
     final Activity activity = this;
 
     private GoogleApiClient client;
 
-    private boolean conect = false;
+
+                /*
+    variables para la conexion
+             */
+
+    private IntentFilter mNetworkStateChangedFilter;
+    private BroadcastReceiver mNetworkStateIntentReceiver;
+    private String mTypeName = "Unknown";
+    private String mSubtypeName = "Unknown";
+    private boolean mAvailable = false;
 
 
-    /*
-    VALIDACIONES
-     */
+
+                    /*
+                VALIDACIONES
+                    */
 
     public boolean  Validaciones(){
+
+
 
         if (    albaranes.getText().toString().equals("") ||
                 matriculaCamion.getText().toString().equals("") ||
@@ -85,24 +94,17 @@ public class ReaderActivity extends AppCompatActivity {
     }
 
 
-                /*
-    variables para la conexion
-             */
-
-    private IntentFilter mNetworkStateChangedFilter;
-    private BroadcastReceiver mNetworkStateIntentReceiver;
-    private String mTypeName = "Unknown";
-    private String mSubtypeName = "Unknown";
-    private boolean mAvailable = false;
-
-
 
                             /*
     comprueba si hay conexion y los muestra en pantalla
-                            */
+                        */
+
 
 
     private void updateScreen() {
+
+
+
 
         if(mAvailable == true){
 
@@ -119,6 +121,10 @@ public class ReaderActivity extends AppCompatActivity {
 
     }
 
+                                /*
+                    Vuelve a ejecutar lo que
+                    paramos en el metodo Pause
+                    */
 
     @Override
     protected void onResume() {
@@ -128,6 +134,12 @@ public class ReaderActivity extends AppCompatActivity {
         unregisterReceiver(mNetworkStateIntentReceiver);
         registerReceiver(mNetworkStateIntentReceiver, mNetworkStateChangedFilter);
     }
+
+                            /*
+            Para los procesos que nosostros queramos
+            como texturas etc.
+            Se ejecuta cuando cambiamos de actividad
+                            */
 
     @Override
     protected void onPause() {
@@ -143,8 +155,20 @@ public class ReaderActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
 
+        setContentView(R.layout.activity_reader); // --> IMPORTANTE QUE ESTE AL INICIO DEL MÉTODO
+
+
+
+        albaranes = (TextView) findViewById(albaran);
+        matriculaCamion = (TextView) findViewById(camion);
+        matriculaRemolque = (TextView) findViewById(matricula_remolque);
+        tvIsConnected = (TextView) findViewById(conexion);
+
+
+
+
                         /*
-        parte de la gestion de la conexion
+        Parte de la gestion de la conexion
                         */
 
         mNetworkStateChangedFilter = new IntentFilter();
@@ -154,8 +178,12 @@ public class ReaderActivity extends AppCompatActivity {
         mNetworkStateIntentReceiver = new BroadcastReceiver() {
 
 
+                    /*
+                    Escucha ......
+                     */
             @Override
             public void onReceive(Context context, Intent intent) {
+
                 if (intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
                     NetworkInfo info = intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
 
@@ -166,6 +194,7 @@ public class ReaderActivity extends AppCompatActivity {
                     Log.i("tipod de conexion", "Network Type: " + mTypeName
                             + ", subtype: " + mSubtypeName
                             + ", available: " + mAvailable);
+
                     updateScreen();
 
                     if(mAvailable == true){
@@ -174,13 +203,11 @@ public class ReaderActivity extends AppCompatActivity {
                         new PostAsincrono().execute("http://192.168.1.171:8084/gsRest/sincro/escaneoCarga?idAndroid=34");
                     }
 
+
+
                 }
             }
         };
-
-
-        setContentView(R.layout.activity_reader);
-
 
 
         /*
@@ -190,20 +217,6 @@ public class ReaderActivity extends AppCompatActivity {
 
         new GetAsincrono().execute("http://192.168.1.171:8084/gsRest/sincro/escaneoCarga?idAndroid=34");
          */
-
-
-        /*
-        captura de los campos del archivo xml
-         */
-
-        albaranes = (TextView) findViewById(albaran);
-        matriculaCamion = (TextView) findViewById(camion);
-        matriculaRemolque = (TextView) findViewById(matricula_remolque);
-        tvIsConnected = (TextView) findViewById(R.id.tvIsConnected);
-
-
-
-       // btn_Enviar = (Button) findViewById(R.id.send_btn); // boton de guardar
 
 
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
@@ -223,7 +236,6 @@ public class ReaderActivity extends AppCompatActivity {
                              */
                 if(Validaciones()){
 
-
                     IntentIntegrator integrator = new IntentIntegrator(activity);
                     integrator.setDesiredBarcodeFormats(IntentIntegrator.DATA_MATRIX_TYPES); // tipod de codigos, se puede cambiar //
                     integrator.setPrompt("Scan");
@@ -238,6 +250,19 @@ public class ReaderActivity extends AppCompatActivity {
                 }
     });
 
+        borrar = (Button) findViewById(R.id.borrar_btn);
+
+        borrar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                albaranes.setText("");
+                matriculaRemolque.setText("");
+                matriculaCamion.setText("");
+
+
+            }
+        });
 
 
     }
@@ -247,6 +272,7 @@ public class ReaderActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.N) // requerido para la fecha y hora //
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
 
 
         final AyudaBD ayudabd = new AyudaBD(getApplicationContext());
@@ -282,6 +308,7 @@ public class ReaderActivity extends AppCompatActivity {
         valores.put(AyudaBD.DatosTabla.FECHA, date);
         valores.put(AyudaBD.DatosTabla.ENVIADO, "no");
 
+
         ContentValues valores2 = new ContentValues();
 
 
@@ -290,12 +317,12 @@ public class ReaderActivity extends AppCompatActivity {
         valores2.put(AyudaBD.Lineas.ID_ALBARAN, albaranes.getText().toString());
 
 
-        /*
+                            /*
         Lamma al metodo de la clase DataBase para insertar los datos
-         */
+                             */
 
-        DataBase.Insert(db, AyudaBD.DatosTabla.NOMBRE_TABLA, AyudaBD.DatosTabla.COLUMNA_ID, valores);
-        DataBase.Insert(db, AyudaBD.Lineas.NOMBRE_TABLA, AyudaBD.Lineas.LINEA_PEDIDO, valores2);
+        DataBase.Insert(db, AyudaBD.DatosTabla.NOMBRE_TABLA, valores);
+        DataBase.Insert(db, AyudaBD.Lineas.NOMBRE_TABLA, valores2);
 
 
         Toast.makeText(getApplicationContext(), "Se guardo el dato: ", Toast.LENGTH_LONG).show();
@@ -339,9 +366,9 @@ public class ReaderActivity extends AppCompatActivity {
     }
 
 
-    /*
+                                /*
     recibe el objeto jsoon resultado de la query a la base de datos
-     */
+                                 */
 
     public void postData(String jota) throws JSONException {
 
@@ -374,26 +401,26 @@ public class ReaderActivity extends AppCompatActivity {
         try {
 
 
-                URL url = new URL("http://192.168.1.171:8084/gsRest/sincro/escaneoCarga?idAndroid=34");
+                    URL url = new URL("http://192.168.1.171:8084/gsRest/sincro/escaneoCarga?idAndroid=34");
 
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setDoOutput(true);
-                conn.setDoInput(true);
-                conn.setRequestMethod("POST");
-                conn.setRequestProperty("Content-Type", "application/json");
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
-
-
-                OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-                wr.write(json.toString());
-                wr.flush();
-                wr.close();
+                    conn.setDoOutput(true);
+                    conn.setDoInput(true);
+                    conn.setRequestMethod("POST");
+                    conn.setRequestProperty("Content-Type", "application/json");
 
 
+                        OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+                        wr.write(json.toString());
+                        wr.flush();
+                        wr.close();
 
-                // respuesta del servidor
 
-                reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            // respuesta del servidor
+
+            reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
 
 
             // update a SI de los datos enviados
@@ -401,27 +428,27 @@ public class ReaderActivity extends AppCompatActivity {
             DataBase.Update(db2);
 
 
-
-
-
         } catch (Exception e) {
+
+
 
 
         } finally {
 
+
             try {
+
                 reader.close();
 
             } catch (Exception e) {
 
 
             }
-
         }
 
     }
 
-                  /*
+                        /*
      CLASE PARA LA CONEXION CON EL SERVICIO REST POST
                         */
 

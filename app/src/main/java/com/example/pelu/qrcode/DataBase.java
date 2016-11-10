@@ -27,13 +27,18 @@ public class DataBase {
 
 
 
-        Cursor cabecerea = db.rawQuery("SELECT albaran, matricula_cam, matricula_rem, fecha from Cabecera WHERE  Cabecera.enviado = 'no'"
-                , null);
+        String [] camposCabecera = new String[] {"albaran", "matricula_cam", "matricula_rem", "fecha"};
+        String [] argsCabecera = new String[] {"no"};
+
+        Cursor cabecerea = db.query(AyudaBD.DatosTabla.NOMBRE_TABLA, camposCabecera, AyudaBD.DatosTabla.NOMBRE_TABLA + ".enviado=?", argsCabecera, null, null, null );
 
 
+        String [] camposLineas = new String[] {"id_albaran", "scaneo"};
+        String [] argsLineas = new String[] {"no"};
+
+        Cursor  linea = db.query(AyudaBD.Lineas.NOMBRE_TABLA, camposLineas, AyudaBD.Lineas.NOMBRE_TABLA +".enviado=?", argsLineas, null, null, null);
 
 
-        Cursor linea =  db.rawQuery("SELECT id_albaran, scaneo from lineas WHERE  lineas.enviado = 'no'", null);
 
 
         JSONArray resultSet = new JSONArray();
@@ -93,19 +98,27 @@ public class DataBase {
 
     public static void Update(SQLiteDatabase db){
 
-            db.execSQL("UPDATE Cabecera SET enviado='si'");
-            db.execSQL("UPDATE lineas SET enviado='si'");
+        ContentValues valoresCabecera = new ContentValues();
+        ContentValues valoresLinea = new ContentValues();
+
+
+        valoresCabecera.put(AyudaBD.DatosTabla.ENVIADO, "si" );
+        valoresLinea.put(AyudaBD.Lineas.ENVIADO, "si");
+
+        db.update(AyudaBD.DatosTabla.NOMBRE_TABLA, valoresCabecera, null, null);
+        db.update(AyudaBD.Lineas.NOMBRE_TABLA, valoresLinea, null, null);
+
+
 
     }
 
                             /*
             Inserta los datos en la base de datos
                              */
-    public  static void Insert(SQLiteDatabase db , String tabla, String campo, ContentValues valor){
+    public  static void Insert(SQLiteDatabase db , String tabla, ContentValues valor){
 
-        db.insert(tabla, campo, valor);
+        db.insert(tabla, null, valor);
 
-        db.insert(tabla, campo, valor);
 
 }
 

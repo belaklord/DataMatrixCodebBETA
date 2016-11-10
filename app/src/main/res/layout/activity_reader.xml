@@ -10,23 +10,8 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.pelu.qrcode.ReaderActivity">
 
-    <!-- INTERFAZ: TEXTO -->
-
-    <!-- INTERFAZ : BOTONES -->
 
 
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="DataCode Scanner"
-        android:textSize="25dp"
-        android:layout_marginLeft="70dp"
-        android:layout_marginStart="70dp"
-        android:layout_marginTop="31dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
 
     <EditText
         android:id="@+id/albaran"
@@ -70,8 +55,20 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="58dp" />
 
+
+
+    <Button
+        android:id="@+id/borrar_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="BORRAR"
+        android:layout_below="@+id/scan_btn"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp" />
+
+
     <TextView
-        android:id="@+id/tvIsConnected"
+        android:id="@+id/conexion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
@@ -79,9 +76,20 @@
         android:textColor="#FFF"
         android:textSize="18dp"
         android:text="Conexion?"
+        android:layout_alignParentTop="true"
         android:layout_alignRight="@+id/scan_btn"
         android:layout_alignEnd="@+id/scan_btn"
-        android:layout_alignParentTop="true" />
+        android:layout_marginTop="12dp" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="DataCode Scanner"
+        android:textSize="25dp"
+        android:layout_marginTop="31dp"
+        android:layout_below="@+id/conexion"
+        android:layout_centerHorizontal="true" />
 
 
 </RelativeLayout>
