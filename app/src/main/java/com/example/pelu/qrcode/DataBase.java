@@ -58,7 +58,11 @@ public class DataBase {
 
                 }
 
+
+                if(objetoCabecera.length() >=2){
+
                     resultSet.put(objetoCabecera);
+                }
 
 
             }
@@ -76,9 +80,11 @@ public class DataBase {
 
                 }
 
-                if(objetoLinea.length() == 2){
+                if(objetoLinea.length()>=2){
                     resultSet.put(objetoLinea);
+
                 }
+
 
             }
 
@@ -121,6 +127,8 @@ public class DataBase {
 
 
 }
+
+    
 
 
 }

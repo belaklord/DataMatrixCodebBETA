@@ -34,7 +34,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
+import java.net.InetAddress;
 import java.net.URL;
 import java.util.Date;
 import static android.widget.Toast.LENGTH_SHORT;
@@ -59,13 +59,14 @@ public class ReaderActivity extends AppCompatActivity {
 
                 /*
     variables para la conexion
-             */
+                */
 
     private IntentFilter mNetworkStateChangedFilter;
     private BroadcastReceiver mNetworkStateIntentReceiver;
     private String mTypeName = "Unknown";
     private String mSubtypeName = "Unknown";
     private boolean mAvailable = false;
+
 
 
 
@@ -97,13 +98,11 @@ public class ReaderActivity extends AppCompatActivity {
 
                             /*
     comprueba si hay conexion y los muestra en pantalla
-                        */
 
+                            */
 
 
     private void updateScreen() {
-
-
 
 
         if(mAvailable == true){
@@ -111,11 +110,15 @@ public class ReaderActivity extends AppCompatActivity {
             tvIsConnected.setBackgroundColor(Color.GREEN);
             tvIsConnected.setText("Conectado");
 
+
+
         }
 
         else{
             tvIsConnected.setBackgroundColor(Color.RED);
             tvIsConnected.setText("No hay conexion");
+
+
         }
 
 
@@ -124,7 +127,7 @@ public class ReaderActivity extends AppCompatActivity {
                                 /*
                     Vuelve a ejecutar lo que
                     paramos en el metodo Pause
-                    */
+                                */
 
     @Override
     protected void onResume() {
@@ -166,6 +169,8 @@ public class ReaderActivity extends AppCompatActivity {
 
 
 
+        new PostAsincrono().execute("http://192.168.1.171:8084/gsRest/sincro/escaneoCarga?idAndroid=34");
+
 
                         /*
         Parte de la gestion de la conexion
@@ -178,9 +183,7 @@ public class ReaderActivity extends AppCompatActivity {
         mNetworkStateIntentReceiver = new BroadcastReceiver() {
 
 
-                    /*
-                    Escucha ......
-                     */
+
             @Override
             public void onReceive(Context context, Intent intent) {
 
@@ -191,17 +194,12 @@ public class ReaderActivity extends AppCompatActivity {
                     mSubtypeName = info.getSubtypeName();
                     mAvailable = info.isAvailable();
 
+
                     Log.i("tipod de conexion", "Network Type: " + mTypeName
                             + ", subtype: " + mSubtypeName
                             + ", available: " + mAvailable);
 
                     updateScreen();
-
-                    if(mAvailable == true){
-
-
-                        new PostAsincrono().execute("http://192.168.1.171:8084/gsRest/sincro/escaneoCarga?idAndroid=34");
-                    }
 
 
 
@@ -268,7 +266,6 @@ public class ReaderActivity extends AppCompatActivity {
     }
 
 
-
     @RequiresApi(api = Build.VERSION_CODES.N) // requerido para la fecha y hora //
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -291,7 +288,7 @@ public class ReaderActivity extends AppCompatActivity {
         SQLiteDatabase db = ayudabd.getWritableDatabase();
 
 
-        String date = (DateFormat.format("dd-MM-yyyy hh:mm:ss", new Date()).toString());
+        String date = (DateFormat.format("yyyy-MM-dd hh:mm:ss", new Date()).toString());
 
 
                                                 /*
@@ -376,6 +373,7 @@ public class ReaderActivity extends AppCompatActivity {
 
             JSONObject json = new JSONObject();
 
+
             try {
                 json.put("id", 22);
             } catch (JSONException e) {
@@ -401,36 +399,42 @@ public class ReaderActivity extends AppCompatActivity {
         try {
 
 
-                    URL url = new URL("http://192.168.1.171:8084/gsRest/sincro/escaneoCarga?idAndroid=34");
 
-                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                URL url = new URL("http://192.168.1.171:8084/gsRest/sincro/escaneoCarga?idAndroid=34");
 
-                    conn.setDoOutput(true);
-                    conn.setDoInput(true);
-                    conn.setRequestMethod("POST");
-                    conn.setRequestProperty("Content-Type", "application/json");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
+                conn.setDoOutput(true);
+                conn.setDoInput(true);
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-Type", "application/json");
 
-                        OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-                        wr.write(json.toString());
-                        wr.flush();
-                        wr.close();
-
-
-            // respuesta del servidor
-
-            reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+                wr.write(json.toString());
+                wr.flush();
+                wr.close();
 
 
 
-            // update a SI de los datos enviados
+         if(jota.length() >2 ) {
 
-            DataBase.Update(db2);
+
+             // respuesta del servidor
+
+             reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+
+
+             // update a SI de los datos enviados
+
+
+             DataBase.Update(db2);
+
+         }
+
 
 
         } catch (Exception e) {
-
-
 
 
         } finally {
@@ -445,6 +449,8 @@ public class ReaderActivity extends AppCompatActivity {
 
             }
         }
+
+
 
     }
 
@@ -466,13 +472,17 @@ public class ReaderActivity extends AppCompatActivity {
 
             try {
 
+            // introducir el objeto json de la base de datos
 
-                if(mAvailable == true){
+                postData(DataBase.DatosTabla(db2));
 
-                    // introducir el objeto json de la base de datos
+                /*
+                 if(mAvailable == true){
 
-                    postData(DataBase.DatosTabla(db2));
+
                 }
+                 */
+
 
 
             } catch (JSONException e) {

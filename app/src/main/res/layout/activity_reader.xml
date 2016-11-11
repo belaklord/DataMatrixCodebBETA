@@ -11,8 +11,6 @@
     tools:context="com.example.pelu.qrcode.ReaderActivity">
 
 
-
-
     <EditText
         android:id="@+id/albaran"
         android:layout_width="fill_parent"
@@ -25,17 +23,6 @@
         android:layout_marginTop="28dp" />
 
     <EditText
-        android:id="@+id/matricula_remolque"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:hint="Matrícula(remolque)"
-        android:inputType="text"
-        android:layout_below="@+id/camion"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="24dp" />
-
-    <EditText
         android:id="@+id/camion"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -46,40 +33,42 @@
         android:layout_alignParentStart="true"
         android:layout_marginTop="12dp" />
 
-    <Button
-        android:id="@+id/scan_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="SCAN"
-        android:layout_below="@+id/matricula_remolque"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="58dp" />
-
-
 
     <Button
         android:id="@+id/borrar_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="BORRAR"
+        android:layout_marginTop="22dp"
         android:layout_below="@+id/scan_btn"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="5dp" />
+        android:layout_alignLeft="@+id/textView"
+        android:layout_alignStart="@+id/textView"
+        android:layout_marginLeft="48dp"
+        android:layout_marginStart="48dp" />
 
-
-    <TextView
-        android:id="@+id/conexion"
+    <Button
+        android:id="@+id/scan_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:background="#D14D4D"
-        android:textColor="#FFF"
-        android:textSize="18dp"
-        android:text="Conexion?"
+        android:text="SCAN"
+        android:layout_marginTop="17dp"
+        android:layout_below="@+id/matricula_remolque"
+        android:layout_alignLeft="@+id/borrar_btn"
+        android:layout_alignStart="@+id/borrar_btn" />
+
+    <TextView
+    android:id="@+id/conexion"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:background="#D14D4D"
+    android:textColor="#FFF"
+    android:textSize="18dp"
+    android:text="Conexion?"
+        android:layout_marginTop="15dp"
         android:layout_alignParentTop="true"
-        android:layout_alignRight="@+id/scan_btn"
-        android:layout_alignEnd="@+id/scan_btn"
-        android:layout_marginTop="12dp" />
+        android:layout_alignLeft="@+id/scan_btn"
+        android:layout_alignStart="@+id/scan_btn" />
 
     <TextView
         android:id="@+id/textView"
@@ -87,9 +76,20 @@
         android:layout_height="wrap_content"
         android:text="DataCode Scanner"
         android:textSize="25dp"
-        android:layout_marginTop="31dp"
+        android:layout_marginTop="28dp"
         android:layout_below="@+id/conexion"
         android:layout_centerHorizontal="true" />
+
+    <EditText
+        android:id="@+id/matricula_remolque"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="Matrícula(remolque)"
+        android:inputType="text"
+        android:layout_marginTop="14dp"
+        android:layout_below="@+id/camion"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
 
 </RelativeLayout>
